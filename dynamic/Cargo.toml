@@ -1,0 +1,39 @@
+[package]
+name = "iced_dynamic"
+version = "0.1.0"
+authors = ["Héctor Ramón Jiménez <hector0193@gmail.com>"]
+edition = "2018"
+description = "Dynamic linking for iced"
+license = "MIT"
+repository = "https://github.com/hecrj/iced"
+documentation = "https://docs.rs/iced_dynamic"
+keywords = ["gui", "ui", "graphics", "interface", "widgets"]
+categories = ["gui"]
+
+[features]
+default = ["wgpu", "default_system_font"]
+
+# Link `iced` dynamically
+dynamic_linking = ["iced_dynamic_internal"]
+
+# See ../Cargo.toml for descriptions
+wgpu = ["iced/wgpu"]
+image = ["iced/image"]
+svg = ["iced/svg"]
+canvas = ["iced/canvas"]
+qr_code = ["iced/qr_code"]
+default_system_font = ["iced/default_system_font"]
+glow = ["iced/glow"]
+glow_canvas = ["iced/glow_canvas"]
+glow_qr_code = ["iced/glow_qr_code"]
+glow_default_system_font = ["iced/glow_default_system_font"]
+debug = ["iced/debug"]
+tokio = ["iced/tokio"]
+tokio_old = ["iced/tokio_old"]
+async-std = ["iced/async-std"]
+smol = ["iced/smol"]
+palette = ["iced/palette"]
+
+[dependencies]
+iced = { version = "0.3", default-features = false, path = ".." }
+iced_dynamic_internal = { version = "0.1", path = "internal", optional = true }

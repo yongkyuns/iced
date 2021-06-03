@@ -52,6 +52,8 @@ maintenance = { status = "actively-developed" }
 [workspace]
 members = [
     "core",
+    "dynamic",
+    "dynamic/internal",
     "futures",
     "graphics",
     "glow",
