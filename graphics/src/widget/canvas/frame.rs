@@ -262,6 +262,14 @@ impl Frame {
         self.transforms.current.is_identity = false;
     }
 
+    /// Applies a scaling to the current transform of the [`Frame`].
+    #[inline]
+    pub fn scale_xy(&mut self, scale_x: f32, scale_y: f32) {
+        self.transforms.current.raw =
+            self.transforms.current.raw.pre_scale(scale_x, scale_y);
+        self.transforms.current.is_identity = false;
+    }
+
     /// Produces the [`Geometry`] representing everything drawn on the [`Frame`].
     pub fn into_geometry(mut self) -> Geometry {
         if !self.buffers.indices.is_empty() {
