@@ -1,7 +1,7 @@
 //! Navigate an endless amount of content with a scrollbar.
-use crate::{
-    bumpalo, css, Align, Bus, Column, Css, Element, Length, Padding, Widget,
-};
+use crate::bumpalo;
+use crate::css;
+use crate::{Alignment, Bus, Column, Css, Element, Length, Padding, Widget};
 
 pub use iced_style::scrollable::{Scrollbar, Scroller, StyleSheet};
 
@@ -14,7 +14,7 @@ pub struct Scrollable<'a, Message> {
     max_height: u32,
     content: Column<'a, Message>,
     #[allow(dead_code)]
-    style: Box<dyn StyleSheet>,
+    style_sheet: Box<dyn StyleSheet + 'a>,
 }
 
 impl<'a, Message> Scrollable<'a, Message> {
@@ -27,7 +27,7 @@ impl<'a, Message> Scrollable<'a, Message> {
             height: Length::Shrink,
             max_height: u32::MAX,
             content: Column::new(),
-            style: Default::default(),
+            style_sheet: Default::default(),
         }
     }
 
@@ -72,14 +72,17 @@ impl<'a, Message> Scrollable<'a, Message> {
     }
 
     /// Sets the horizontal alignment of the contents of the [`Scrollable`] .
-    pub fn align_items(mut self, align_items: Align) -> Self {
+    pub fn align_items(mut self, align_items: Alignment) -> Self {
         self.content = self.content.align_items(align_items);
         self
     }
 
     /// Sets the style of the [`Scrollable`] .
-    pub fn style(mut self, style: impl Into<Box<dyn StyleSheet>>) -> Self {
-        self.style = style.into();
+    pub fn style(
+        mut self,
+        style_sheet: impl Into<Box<dyn StyleSheet + 'a>>,
+    ) -> Self {
+        self.style_sheet = style_sheet.into();
         self
     }
 

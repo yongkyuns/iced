@@ -1,6 +1,6 @@
 use iced::{
-    button, scrollable, slider, text_input, Align, Button, Checkbox, Column,
-    Container, Element, Length, ProgressBar, Radio, Row, Rule, Sandbox,
+    button, scrollable, slider, text_input, Alignment, Button, Checkbox,
+    Column, Container, Element, Length, ProgressBar, Radio, Row, Rule, Sandbox,
     Scrollable, Settings, Slider, Space, Text, TextInput, Toggler,
 };
 
@@ -60,7 +60,7 @@ impl Sandbox for Styling {
                 column.push(
                     Radio::new(
                         *theme,
-                        &format!("{:?}", theme),
+                        format!("{:?}", theme),
                         Some(self.theme),
                         Message::ThemeChanged,
                     )
@@ -132,7 +132,7 @@ impl Sandbox for Styling {
                 Row::new()
                     .spacing(10)
                     .height(Length::Units(100))
-                    .align_items(Align::Center)
+                    .align_items(Alignment::Center)
                     .push(scrollable)
                     .push(Rule::vertical(38).style(self.theme))
                     .push(
@@ -176,7 +176,7 @@ mod style {
         }
     }
 
-    impl From<Theme> for Box<dyn container::StyleSheet> {
+    impl<'a> From<Theme> for Box<dyn container::StyleSheet + 'a> {
         fn from(theme: Theme) -> Self {
             match theme {
                 Theme::Light => Default::default(),
@@ -185,7 +185,7 @@ mod style {
         }
     }
 
-    impl From<Theme> for Box<dyn radio::StyleSheet> {
+    impl<'a> From<Theme> for Box<dyn radio::StyleSheet + 'a> {
         fn from(theme: Theme) -> Self {
             match theme {
                 Theme::Light => Default::default(),
@@ -194,7 +194,7 @@ mod style {
         }
     }
 
-    impl From<Theme> for Box<dyn text_input::StyleSheet> {
+    impl<'a> From<Theme> for Box<dyn text_input::StyleSheet + 'a> {
         fn from(theme: Theme) -> Self {
             match theme {
                 Theme::Light => Default::default(),
@@ -203,7 +203,7 @@ mod style {
         }
     }
 
-    impl From<Theme> for Box<dyn button::StyleSheet> {
+    impl<'a> From<Theme> for Box<dyn button::StyleSheet + 'a> {
         fn from(theme: Theme) -> Self {
             match theme {
                 Theme::Light => light::Button.into(),
@@ -212,7 +212,7 @@ mod style {
         }
     }
 
-    impl From<Theme> for Box<dyn scrollable::StyleSheet> {
+    impl<'a> From<Theme> for Box<dyn scrollable::StyleSheet + 'a> {
         fn from(theme: Theme) -> Self {
             match theme {
                 Theme::Light => Default::default(),
@@ -221,7 +221,7 @@ mod style {
         }
     }
 
-    impl From<Theme> for Box<dyn slider::StyleSheet> {
+    impl<'a> From<Theme> for Box<dyn slider::StyleSheet + 'a> {
         fn from(theme: Theme) -> Self {
             match theme {
                 Theme::Light => Default::default(),
@@ -239,7 +239,7 @@ mod style {
         }
     }
 
-    impl From<Theme> for Box<dyn checkbox::StyleSheet> {
+    impl<'a> From<Theme> for Box<dyn checkbox::StyleSheet + 'a> {
         fn from(theme: Theme) -> Self {
             match theme {
                 Theme::Light => Default::default(),
@@ -528,6 +528,7 @@ mod style {
                     background: if is_checked { ACTIVE } else { SURFACE }
                         .into(),
                     checkmark_color: Color::WHITE,
+                    text_color: Color::BLACK,
                     border_radius: 2.0,
                     border_width: 1.0,
                     border_color: ACTIVE,

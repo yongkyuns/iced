@@ -2,12 +2,13 @@ use crate::quad;
 use crate::text;
 use crate::triangle;
 use crate::{Settings, Transformation};
+
 use iced_graphics::backend;
 use iced_graphics::font;
 use iced_graphics::layer::Layer;
 use iced_graphics::{Primitive, Viewport};
-use iced_native::mouse;
-use iced_native::{Font, HorizontalAlignment, Size, VerticalAlignment};
+use iced_native::alignment;
+use iced_native::{Font, Size};
 
 #[cfg(any(feature = "image_rs", feature = "svg"))]
 use crate::image;
@@ -65,23 +66,23 @@ impl Backend {
     ///
     /// The text provided as overlay will be rendered on top of the primitives.
     /// This is useful for rendering debug information.
-    pub fn draw<T: AsRef<str>>(
+    pub fn present<T: AsRef<str>>(
         &mut self,
         device: &wgpu::Device,
         staging_belt: &mut wgpu::util::StagingBelt,
         encoder: &mut wgpu::CommandEncoder,
         frame: &wgpu::TextureView,
+        primitives: &[Primitive],
         viewport: &Viewport,
-        (primitive, mouse_interaction): &(Primitive, mouse::Interaction),
         overlay_text: &[T],
-    ) -> mouse::Interaction {
+    ) {
         log::debug!("Drawing");
 
         let target_size = viewport.physical_size();
         let scale_factor = viewport.scale_factor() as f32;
         let transformation = viewport.projection();
 
-        let mut layers = Layer::generate(primitive, viewport);
+        let mut layers = Layer::generate(primitives, viewport);
         layers.push(Layer::overlay(overlay_text, viewport));
 
         for layer in layers {
@@ -100,8 +101,6 @@ impl Backend {
 
         #[cfg(any(feature = "image_rs", feature = "svg"))]
         self.image_pipeline.trim_cache();
-
-        *mouse_interaction
     }
 
     fn flush(
@@ -117,6 +116,10 @@ impl Backend {
         target_height: u32,
     ) {
         let bounds = (layer.bounds * scale_factor).snap();
+
+        if bounds.width < 1 || bounds.height < 1 {
+            return;
+        }
 
         if !layer.quads.is_empty() {
             self.quad_pipeline.draw(
@@ -206,24 +209,24 @@ impl Backend {
                     }],
                     layout: wgpu_glyph::Layout::default()
                         .h_align(match text.horizontal_alignment {
-                            HorizontalAlignment::Left => {
+                            alignment::Horizontal::Left => {
                                 wgpu_glyph::HorizontalAlign::Left
                             }
-                            HorizontalAlignment::Center => {
+                            alignment::Horizontal::Center => {
                                 wgpu_glyph::HorizontalAlign::Center
                             }
-                            HorizontalAlignment::Right => {
+                            alignment::Horizontal::Right => {
                                 wgpu_glyph::HorizontalAlign::Right
                             }
                         })
                         .v_align(match text.vertical_alignment {
-                            VerticalAlignment::Top => {
+                            alignment::Vertical::Top => {
                                 wgpu_glyph::VerticalAlign::Top
                             }
-                            VerticalAlignment::Center => {
+                            alignment::Vertical::Center => {
                                 wgpu_glyph::VerticalAlign::Center
                             }
-                            VerticalAlignment::Bottom => {
+                            alignment::Vertical::Bottom => {
                                 wgpu_glyph::VerticalAlign::Bottom
                             }
                         }),
@@ -273,6 +276,25 @@ impl backend::Text for Backend {
         bounds: Size,
     ) -> (f32, f32) {
         self.text_pipeline.measure(contents, size, font, bounds)
+    }
+
+    fn hit_test(
+        &self,
+        contents: &str,
+        size: f32,
+        font: Font,
+        bounds: Size,
+        point: iced_native::Point,
+        nearest_only: bool,
+    ) -> Option<text::Hit> {
+        self.text_pipeline.hit_test(
+            contents,
+            size,
+            font,
+            bounds,
+            point,
+            nearest_only,
+        )
     }
 }
 

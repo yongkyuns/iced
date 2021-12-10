@@ -28,13 +28,18 @@
 //! [`druid`]: https://github.com/xi-editor/druid
 //! [`raw-window-handle`]: https://github.com/rust-windowing/raw-window-handle
 //! [renderer]: crate::renderer
+#![doc(
+    html_logo_url = "https://raw.githubusercontent.com/iced-rs/iced/9ab6923e943f784985e9ef9ca28b10278297225d/docs/logo.svg"
+)]
 #![deny(missing_docs)]
 #![deny(missing_debug_implementations)]
 #![deny(unused_results)]
 #![forbid(unsafe_code)]
 #![forbid(rust_2018_idioms)]
 pub mod clipboard;
+pub mod command;
 pub mod event;
+pub mod image;
 pub mod keyboard;
 pub mod layout;
 pub mod mouse;
@@ -42,6 +47,8 @@ pub mod overlay;
 pub mod program;
 pub mod renderer;
 pub mod subscription;
+pub mod svg;
+pub mod text;
 pub mod touch;
 pub mod widget;
 pub mod window;
@@ -49,6 +56,7 @@ pub mod window;
 mod element;
 mod hasher;
 mod runtime;
+mod shell;
 mod user_interface;
 
 // We disable debug capabilities on release builds unless the `debug` feature
@@ -60,16 +68,18 @@ mod debug;
 #[path = "debug/null.rs"]
 mod debug;
 
+pub use iced_core::alignment;
 pub use iced_core::{
-    menu, Align, Background, Color, Font, HorizontalAlignment, Length, Menu,
-    Padding, Point, Rectangle, Size, Vector, VerticalAlignment,
+    Alignment, Background, Color, Font, Length, Padding, Point, Rectangle,
+    Size, Vector,
 };
-pub use iced_futures::{executor, futures, Command};
+pub use iced_futures::{executor, futures};
 
 #[doc(no_inline)]
 pub use executor::Executor;
 
 pub use clipboard::Clipboard;
+pub use command::Command;
 pub use debug::Debug;
 pub use element::Element;
 pub use event::Event;
@@ -79,6 +89,7 @@ pub use overlay::Overlay;
 pub use program::Program;
 pub use renderer::Renderer;
 pub use runtime::Runtime;
+pub use shell::Shell;
 pub use subscription::Subscription;
 pub use user_interface::{Cache, UserInterface};
-pub use widget::*;
+pub use widget::Widget;

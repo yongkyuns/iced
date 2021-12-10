@@ -4,12 +4,18 @@ use crate::window;
 /// The settings of an application.
 #[derive(Debug, Clone)]
 pub struct Settings<Flags> {
+    /// The identifier of the application.
+    ///
+    /// If provided, this identifier may be used to identify the application or
+    /// communicate with it through the windowing system.
+    pub id: Option<String>,
+
     /// The window settings.
     ///
     /// They will be ignored on the Web.
     pub window: window::Settings,
 
-    /// The data needed to initialize an [`Application`].
+    /// The data needed to initialize the [`Application`].
     ///
     /// [`Application`]: crate::Application
     pub flags: Flags,
@@ -46,6 +52,8 @@ pub struct Settings<Flags> {
     /// window to close (e.g. the user presses the close button).
     ///
     /// By default, it is enabled.
+    ///
+    /// [`Application`]: crate::Application
     pub exit_on_close_request: bool,
 }
 
@@ -58,6 +66,7 @@ impl<Flags> Settings<Flags> {
 
         Self {
             flags,
+            id: default_settings.id,
             window: default_settings.window,
             default_font: default_settings.default_font,
             default_text_size: default_settings.default_text_size,
@@ -74,8 +83,9 @@ where
 {
     fn default() -> Self {
         Self {
-            flags: Default::default(),
+            id: None,
             window: Default::default(),
+            flags: Default::default(),
             default_font: Default::default(),
             default_text_size: 20,
             text_multithreading: false,
@@ -89,6 +99,7 @@ where
 impl<Flags> From<Settings<Flags>> for iced_winit::Settings<Flags> {
     fn from(settings: Settings<Flags>) -> iced_winit::Settings<Flags> {
         iced_winit::Settings {
+            id: settings.id,
             window: settings.window.into(),
             flags: settings.flags,
             exit_on_close_request: settings.exit_on_close_request,

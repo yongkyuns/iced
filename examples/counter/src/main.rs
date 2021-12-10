@@ -1,7 +1,12 @@
+<<<<<<< HEAD
 use std::{cell::RefCell, rc::Rc};
 
 use iced::{
     button, Align, Button, Column, Element, Row, Sandbox, Settings, Text,
+=======
+use iced::{
+    button, Alignment, Button, Column, Element, Sandbox, Settings, Text,
+>>>>>>> 8cbba944581a81931848352ec45646d882d9b3d0
 };
 
 pub fn main() -> iced::Result {
@@ -129,7 +134,7 @@ impl Sandbox for Counter {
     fn view(&mut self) -> Element<Message> {
         Column::new()
             .padding(20)
-            .align_items(Align::Center)
+            .align_items(Alignment::Center)
             .push(
                 Button::new(&mut self.increment_button, Text::new("Increment"))
                     .on_press(Message::IncrementPressed),
