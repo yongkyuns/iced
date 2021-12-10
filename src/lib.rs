@@ -171,6 +171,9 @@
 //!
 //! [Elm]: https://elm-lang.org/
 //! [The Elm Architecture]: https://guide.elm-lang.org/architecture/
+#![doc(
+    html_logo_url = "https://raw.githubusercontent.com/iced-rs/iced/9ab6923e943f784985e9ef9ca28b10278297225d/docs/logo.svg"
+)]
 #![deny(missing_docs)]
 #![deny(missing_debug_implementations)]
 #![deny(unused_results)]
@@ -183,6 +186,7 @@ mod error;
 mod result;
 mod sandbox;
 
+pub mod clipboard;
 pub mod executor;
 pub mod keyboard;
 pub mod mouse;
@@ -244,8 +248,9 @@ pub use result::Result;
 pub use sandbox::Sandbox;
 pub use settings::Settings;
 
+pub use runtime::alignment;
+pub use runtime::futures;
 pub use runtime::{
-    futures, menu, Align, Background, Clipboard, Color, Command, Font,
-    HorizontalAlignment, Length, Menu, Point, Rectangle, Size, Subscription,
-    Vector, VerticalAlignment,
+    Alignment, Background, Color, Command, Font, Length, Point, Rectangle,
+    Size, Subscription, Vector,
 };

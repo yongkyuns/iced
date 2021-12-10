@@ -1,8 +1,7 @@
 use iced::{
-    button, executor, keyboard, pane_grid, scrollable, Align, Application,
-    Button, Clipboard, Color, Column, Command, Container, Element,
-    HorizontalAlignment, Length, PaneGrid, Row, Scrollable, Settings,
-    Subscription, Text,
+    alignment, button, executor, keyboard, pane_grid, scrollable, Alignment,
+    Application, Button, Color, Column, Command, Container, Element, Length,
+    PaneGrid, Row, Scrollable, Settings, Subscription, Text,
 };
 use iced_native::{event, subscription, Event};
 
@@ -51,11 +50,7 @@ impl Application for Example {
         String::from("Pane grid - Iced")
     }
 
-    fn update(
-        &mut self,
-        message: Message,
-        _clipboard: &mut Clipboard,
-    ) -> Command<Message> {
+    fn update(&mut self, message: Message) -> Command<Message> {
         match message {
             Message::Split(axis, pane) => {
                 let result = self.panes.split(
@@ -182,7 +177,11 @@ impl Application for Example {
             let title_bar = pane_grid::TitleBar::new(title)
                 .controls(pane.controls.view(id, total_panes, pane.is_pinned))
                 .padding(10)
-                .style(style::TitleBar { is_focused });
+                .style(if is_focused {
+                    style::TitleBar::Focused
+                } else {
+                    style::TitleBar::Active
+                });
 
             pane_grid::Content::new(pane.content.view(
                 id,
@@ -190,7 +189,11 @@ impl Application for Example {
                 pane.is_pinned,
             ))
             .title_bar(title_bar)
-            .style(style::Pane { is_focused })
+            .style(if is_focused {
+                style::Pane::Focused
+            } else {
+                style::Pane::Active
+            })
         })
         .width(Length::Fill)
         .height(Length::Fill)
@@ -297,7 +300,7 @@ impl Content {
                 state,
                 Text::new(label)
                     .width(Length::Fill)
-                    .horizontal_alignment(HorizontalAlignment::Center)
+                    .horizontal_alignment(alignment::Horizontal::Center)
                     .size(16),
             )
             .width(Length::Fill)
@@ -334,7 +337,7 @@ impl Content {
         let content = Scrollable::new(scroll)
             .width(Length::Fill)
             .spacing(10)
-            .align_items(Align::Center)
+            .align_items(Alignment::Center)
             .push(controls);
 
         Container::new(content)
@@ -392,14 +395,16 @@ mod style {
         0xC4 as f32 / 255.0,
     );
 
-    pub struct TitleBar {
-        pub is_focused: bool,
+    pub enum TitleBar {
+        Active,
+        Focused,
     }
 
     impl container::StyleSheet for TitleBar {
         fn style(&self) -> container::Style {
-            let pane = Pane {
-                is_focused: self.is_focused,
+            let pane = match self {
+                Self::Active => Pane::Active,
+                Self::Focused => Pane::Focused,
             }
             .style();
 
@@ -411,8 +416,9 @@ mod style {
         }
     }
 
-    pub struct Pane {
-        pub is_focused: bool,
+    pub enum Pane {
+        Active,
+        Focused,
     }
 
     impl container::StyleSheet for Pane {
@@ -420,10 +426,9 @@ mod style {
             container::Style {
                 background: Some(Background::Color(SURFACE)),
                 border_width: 2.0,
-                border_color: if self.is_focused {
-                    Color::BLACK
-                } else {
-                    Color::from_rgb(0.7, 0.7, 0.7)
+                border_color: match self {
+                    Self::Active => Color::from_rgb(0.7, 0.7, 0.7),
+                    Self::Focused => Color::BLACK,
                 },
                 ..Default::default()
             }
